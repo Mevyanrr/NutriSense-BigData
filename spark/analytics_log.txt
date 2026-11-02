@@ -1,0 +1,23 @@
+Picked up JAVA_TOOL_OPTIONS: -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/01 15:21:30 WARN SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in standalone/kubernetes and LOCAL_DIRS in YARN).
+26/11/01 15:21:32 WARN Utils: The configured local directories are not expected to be URIs; however, got suspicious values [D:/spark-temp]. Please check your configured local directories.
+[Stage 0:>                                                          (0 + 1) / 1]                                                                                [Stage 1:>                                                        (0 + 16) / 16][Stage 1:===================================>                     (10 + 6) / 16][Stage 1:=====================================================>   (15 + 1) / 16]                                                                                [Stage 7:>                                                        (0 + 16) / 16]                                                                                [Stage 13:>                                                         (0 + 1) / 1]                                                                                26/11/01 15:21:52 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+[Stage 15:>                                                       (0 + 16) / 16][Stage 15:=======>                                                (2 + 14) / 16][Stage 15:=================>                                      (5 + 11) / 16][Stage 15:=============================================>          (13 + 3) / 16][Stage 17:>                                                       (0 + 14) / 14][Stage 17:====>                                                   (1 + 13) / 14][Stage 17:========>                                               (2 + 12) / 14][Stage 17:========================>                                (6 + 8) / 14][Stage 17:============================================>           (11 + 3) / 14]                                                                                [Stage 18:>                                                         (0 + 1) / 1]                                                                                [Stage 19:>                                                       (0 + 16) / 16]                                                                                [Stage 43:>                                                       (0 + 16) / 16]                                                                                [Stage 47:>                                                       (0 + 16) / 16]netlib-blas: JNI_OnLoad: dlopen(libopenblas.dll) failed: LoadLibrary failed
+[Stage 47:===>                                                    (1 + 15) / 16][Stage 47:==========================================>             (12 + 4) / 16]                                                                                [saved] overview.parquet (1 baris)
+[saved] macro_share.parquet (3 baris)
+[saved] category_stats.parquet (440 baris)
+[saved] distribution_box.parquet (6 baris)
+[saved] distribution_hist.parquet (180 baris)
+[saved] correlation.parquet (36 baris)
+[saved] atwater_check.parquet (1 baris)
+[saved] top_foods.parquet (60 baris)
+[saved] insights.parquet (8 baris)
+
+Selesai. 8 insight dibuat dari 1,797,713 produk.
+SUCCESS: The process with PID 13652 (child process of PID 8500) has been terminated.
+SUCCESS: The process with PID 8500 (child process of PID 26084) has been terminated.
+SUCCESS: The process with PID 26084 (child process of PID 25080) has been terminated.
