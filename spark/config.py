@@ -1,14 +1,13 @@
 import os
 import sys
 
-# ====== SESUAIKAN ======
+#SESUAIKAN
 HDFS_URI = "hdfs://localhost:9000"   # cek: hdfs getconf -confKey fs.defaultFS
 DRIVER_MEMORY = "6g"                 # laptop 8 GB -> "3g"
 LOCAL_TMP = "D:/spark-temp"
 SHUFFLE_PARTITIONS = "64"
 DATE_CUTOFF = "2025-11-01"           # batas "data maks. 1 tahun"
 FILTER_BY_RECORD_DATE = False        # True = hanya produk dg publication_date >= DATE_CUTOFF
-# =======================
 
 BASE = f"{HDFS_URI}/nutrisense"
 RAW = f"{BASE}/raw"

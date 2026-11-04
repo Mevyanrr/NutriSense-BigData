@@ -9,7 +9,7 @@ def rd(name, multi=False):
     return spark.read.csv(f"{RAW}/{name}.csv", header=True, escape='"', multiLine=multi)
 
 
-# ---------- 1. Baca (semua string, lalu cast eksplisit) ----------
+# Membaca (semua string, lalu cast eksplisit)
 food = rd("food").select(
     F.col("fdc_id").cast("int").alias("fdc_id"),
     F.col("description"),
@@ -30,7 +30,7 @@ fn = rd("food_nutrient").select(
     F.col("nutrient_id").cast("int").alias("nutrient_id"),
     F.col("amount").cast("double").alias("amount"))
 
-# ---------- 2. Validasi data mentah ----------
+# Validasi data mentah
 print("\n=== VALIDASI DATA MENTAH ===")
 cut = F.lit(DATE_CUTOFF).cast("date")
 fs = food.agg(
@@ -61,7 +61,7 @@ orphans = fn.select("fdc_id").distinct().join(food, "fdc_id", "left_anti").count
 print(f"fdc_id di food_nutrient yang tidak ada di food (yatim): {orphans}")
 print("CATATAN: fdc_id null > 0 pada food/branded_food berarti CSV salah terbaca (cek kutip/baris baru).")
 
-# ---------- 3. Nutrisi target ----------
+# Nutrisi target
 print("\n=== NUTRISI TARGET (harus 6 baris, energi KCAL) ===")
 nbrs = [float(k) for k in TARGET_NUTRIENTS]
 nt = nutrient.filter(F.col("nutrient_nbr").isin(nbrs))
@@ -69,13 +69,13 @@ nt.orderBy("nutrient_nbr").show(truncate=False)
 if nt.count() != len(TARGET_NUTRIENTS):
     print("PERINGATAN: jumlah nutrisi target tidak 6. Periksa tabel di atas sebelum lanjut.")
 
-# ---------- 4. Pivot long -> wide ----------
+# Pivot long -> wide
 j = fn.join(F.broadcast(nt.select("nutrient_id", "nutrient_nbr")), "nutrient_id")
 aggs = [F.max(F.when(F.col("nutrient_nbr") == F.lit(float(k)), F.col("amount"))).alias(v)
         for k, v in TARGET_NUTRIENTS.items()]
 wide = j.groupBy("fdc_id").agg(*aggs)
 
-# ---------- 5. Join + kualitas ----------
+# Join + kualitas
 joined = (wide.join(food, "fdc_id").join(branded, "fdc_id")
           .filter(F.col("category").isNotNull() & (F.col("category") != ""))
           .withColumn("sugar_reported", F.col("sugar").isNotNull())
@@ -113,7 +113,7 @@ print(f"Jumlah kategori final                      : {n_cat}")
 final.write.mode("overwrite").parquet(f"{CURATED}/foods.parquet")
 print(f"[saved] {CURATED}/foods.parquet")
 
-# ---------- 6. Simpan ringkasan untuk halaman Data Ingestion ----------
+# Simpan ringkasan untuk halaman Data Ingestion
 rows = [
     ("food_rows", str(fs.n)), ("branded_rows", str(bs.n)), ("food_nutrient_rows", str(fns.n)),
     ("nutrient_types_total", str(nutrient.count())),

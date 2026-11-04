@@ -10,7 +10,7 @@ N = df.count()
 NUTS = list(TARGET_NUTRIENTS.values())   # protein, fat, carbs, energy_kcal, sugar, fiber
 es = dict(load_small(spark, "etl_summary").values)
 
-# ---------- 1. Overview + komposisi makro ----------
+# Overview + komposisi makro
 ov = df.agg(F.count("*").alias("total_foods"),
             F.countDistinct("category").alias("total_categories"),
             *[F.avg(c).alias(f"avg_{c}") for c in NUTS]).toPandas()
@@ -25,7 +25,7 @@ share = pd.DataFrame({
     "share_pct": [100 * r["avg_protein"] / tot, 100 * r["avg_fat"] / tot, 100 * r["avg_carbs"] / tot]})
 save_small(spark, share, "macro_share")
 
-# ---------- 2. Statistik per kategori ----------
+# Statistik per kategori
 aggs = [F.count("*").alias("n_foods")]
 for c in NUTS:
     aggs += [F.avg(c).alias(f"{c}_mean"), F.stddev(c).alias(f"{c}_std"),
@@ -33,7 +33,7 @@ for c in NUTS:
 cat = df.groupBy("category").agg(*aggs).toPandas().sort_values("n_foods", ascending=False)
 save_small(spark, cat, "category_stats")
 
-# ---------- 3. Distribusi (histogram + box plot) ----------
+# Distribusi (histogram + box plot)
 QS = [0.0, 0.01, 0.25, 0.5, 0.75, 0.99, 1.0]
 NBINS = 30
 qres = df.approxQuantile(NUTS, QS, 0.001)
@@ -51,7 +51,7 @@ for c, q in zip(NUTS, qres):
 save_small(spark, pd.DataFrame(box_rows), "distribution_box")
 save_small(spark, pd.DataFrame(hist_rows), "distribution_hist")
 
-# ---------- 4. Korelasi ----------
+# Korelasi
 vec = VectorAssembler(inputCols=NUTS, outputCol="v").transform(df.select(*NUTS))
 cm = Correlation.corr(vec, "v", "pearson").head()[0].toArray()
 corr_rows = [{"nutrient_x": a, "nutrient_y": b, "pearson": float(cm[i][j])}
@@ -63,7 +63,7 @@ at_corr = at.stat.corr("energy_kcal", "atwater")
 at_mae = at.agg(F.avg(F.abs(F.col("energy_kcal") - F.col("atwater")))).first()[0]
 save_small(spark, pd.DataFrame([{"corr_energy_vs_atwater": at_corr, "mae_kcal": at_mae}]), "atwater_check")
 
-# ---------- 5. Top foods per nutrisi ----------
+# Top foods per nutrisi
 frames = []
 for c in NUTS:
     frames.append(df.orderBy(F.col(c).desc()).limit(10)
@@ -71,7 +71,7 @@ for c in NUTS:
                           F.lit(c).alias("nutrient"), F.col(c).alias("value")).toPandas())
 save_small(spark, pd.concat(frames, ignore_index=True), "top_foods")
 
-# ---------- 6. Insight otomatis (dari angka di atas) ----------
+# Insight otomatis (dari angka di atas)
 MIN_CAT = 200
 big = cat[cat["n_foods"] >= MIN_CAT]
 ins = []
